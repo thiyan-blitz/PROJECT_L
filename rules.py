@@ -1,0 +1,162 @@
+"""
+rules.py - All rule classes for codeguard
+OOP Concepts demonstrated: Abstract base class, Inheritance, Method overriding
+"""
+
+import ast
+import re
+
+
+class Rule:
+    """
+    BASE CLASS (Abstract-style)
+    Every rule must have a name and must implement check().
+    This is the parent that all other rules inherit from.
+    """
+
+    name = "Base Rule"
+    description = "Base class — do not use directly"
+
+    def check(self, source_code: str) -> list:
+        """
+        Every subclass MUST override this method.
+        Returns a list of Issue objects found in the source code.
+        """
+        raise NotImplementedError("Subclasses must implement check()")
+
+
+# ─────────────────────────────────────────────
+# SUBCLASS 1: Naming Rule
+# ─────────────────────────────────────────────
+
+class NamingRule(Rule):
+    """
+    SUBCLASS - inherits from Rule
+    Checks if function and variable names follow snake_case convention.
+    Interview talking point: "I overrode the check() method to provide
+    naming-specific logic, while keeping the same interface."
+    """
+
+    name = "Naming Convention"
+    description = "Function names should be lowercase with underscores (snake_case)"
+
+    def check(self, source_code: str) -> list:
+        issues = []
+        lines = source_code.splitlines()
+
+        for line_num, line in enumerate(lines, start=1):
+            # Look for function definitions
+            match = re.match(r'\s*def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\([A-Za-z]|\s\):', line)
+            if match:
+                func_name = match.group(1)
+                # Check if it's NOT snake_case (has uppercase letters)
+                if func_name != func_name.lower() and not func_name.startswith('__'):
+                    issues.append(Issue(
+                        line=line_num,
+                        message=f"Function '{func_name}' should be snake_case",
+                        severity="warning",
+                        rule=self.name
+                    ))
+
+        return issues
+
+
+# ─────────────────────────────────────────────
+# SUBCLASS 2: Complexity Rule
+# ─────────────────────────────────────────────
+
+class ComplexityRule(Rule):
+    """
+    SUBCLASS - inherits from Rule
+    Checks if functions are too long (hard to read and maintain).
+    Interview talking point: "This class has its own state (max_lines)
+    that controls its behavior — demonstrating encapsulation."
+    """
+
+    name = "Function Length"
+    description = "Functions should ideally be under 30 lines"
+
+    def __init__(self, max_lines: int = 30):
+        self.max_lines = max_lines  # Encapsulation: rule owns its own config
+
+    def check(self, source_code: str) -> list:
+        issues = []
+
+        try:
+            tree = ast.parse(source_code)
+        except SyntaxError:
+            return []  # Can't check what we can't parse
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef):
+                func_length = node.end_lineno - node.lineno
+                if func_length > self.max_lines:
+                    issues.append(Issue(
+                        line=node.lineno,
+                        message=f"Function '{node.name}' is {func_length} lines (max: {self.max_lines})",
+                        severity="warning",
+                        rule=self.name
+                    ))
+
+        return issues
+
+
+# ─────────────────────────────────────────────
+# SUBCLASS 3: Security Rule
+# ─────────────────────────────────────────────
+
+class SecurityRule(Rule):
+    """
+    SUBCLASS - inherits from Rule
+    Catches common Python anti-patterns that can hide bugs.
+    Interview talking point: "I used a list of patterns so adding
+    new security checks is just adding to the list — Open/Closed principle."
+    """
+
+    name = "Security & Best Practices"
+    description = "Detects bare except clauses and other anti-patterns"
+
+    # Patterns to look for (easy to extend!)
+    PATTERNS = [
+        (r'\bexcept\s*:', "Bare 'except:' hides all errors — use 'except Exception'"),
+        (r'\beval\s*\(', "Avoid eval() — it can execute arbitrary code"),
+        (r'\bexec\s*\(', "Avoid exec() — it can execute arbitrary code"),
+        (r'print\s*\(.*password', "Possible password printed to console"),
+    ]
+
+    def check(self, source_code: str) -> list:
+        issues = []
+        lines = source_code.splitlines()
+
+        for line_num, line in enumerate(lines, start=1):
+            for pattern, message in self.PATTERNS:
+                if re.search(pattern, line):
+                    issues.append(Issue(
+                        line=line_num,
+                        message=message,
+                        severity="error",
+                        rule=self.name
+                    ))
+
+        return issues
+
+
+# ─────────────────────────────────────────────
+# Helper: Issue data class
+# ─────────────────────────────────────────────
+
+class Issue:
+    """
+    Represents a single problem found in the code.
+    Interview talking point: "I separated the data (Issue) from
+    the logic (Rule) — Single Responsibility Principle."
+    """
+
+    def __init__(self, line: int, message: str, severity: str, rule: str):
+        self.line = line
+        self.message = message
+        self.severity = severity  # "warning" or "error"
+        self.rule = rule
+
+    def __repr__(self):
+        return f"Issue(line={self.line}, severity={self.severity})"
