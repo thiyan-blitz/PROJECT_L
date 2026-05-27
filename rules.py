@@ -85,7 +85,7 @@ class ComplexityRule(Rule):
         try:
             tree = ast.parse(source_code)
         except SyntaxError:
-            return []  # Can't check what we can't parse
+            return []  
 
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
