@@ -144,6 +144,9 @@ class SecurityRule(Rule):
 # ─────────────────────────────────────────────
 # Helper: Issue data class
 # ─────────────────────────────────────────────
+from dataclasses import dataclass
+
+@dataclass
 
 class Issue:
     """
@@ -152,11 +155,10 @@ class Issue:
     the logic (Rule) — Single Responsibility Principle."
     """
 
-    def __init__(self, line: int, message: str, severity: str, rule: str):
-        self.line = line
-        self.message = message
-        self.severity = severity  # "warning" or "error"
-        self.rule = rule
+    line: int
+    message: str
+    severity: str
+    rule: str
 
     def __repr__(self):
-        return f"Issue(line={self.line}, severity={self.severity})"
+        return f"Issue(line={self.line}, severity='{self.severity}')"
