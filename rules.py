@@ -5,9 +5,9 @@ OOP Concepts demonstrated: Abstract base class, Inheritance, Method overriding
 
 import ast
 import re
+from abc import ABC, abstractmethod
 
-
-class Rule:
+class Rule(ABC):
     """
     BASE CLASS (Abstract-style)
     Every rule must have a name and must implement check().
@@ -17,12 +17,13 @@ class Rule:
     name = "Base Rule"
     description = "Base class — do not use directly"
 
+    @abstractmethod
     def check(self, source_code: str) -> list:
         """
         Every subclass MUST override this method.
         Returns a list of Issue objects found in the source code.
         """
-        raise NotImplementedError("Subclasses must implement check()")
+        pass
 
 
 # ─────────────────────────────────────────────
