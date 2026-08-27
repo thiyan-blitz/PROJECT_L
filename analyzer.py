@@ -34,13 +34,7 @@ class Analyzer:
 
 
 class AnalysisResult:
-    """
-    Holds the result of an analysis run.
-    Interview talking point: "I separated the result data from
-    the analysis logic — makes it easy to display results in
-    different ways (console, JSON, HTML) without changing the core logic."
-    """
-
+    
     def __init__(self, issues: list, source_code: str):
         self.issues = issues
         self.line_count = len(source_code.splitlines())

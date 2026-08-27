@@ -38,7 +38,7 @@ class NamingRule(Rule):
 
         for line_num, line in enumerate(lines, start=1):
             # Look for function definitions
-            match = re.match(r'\s*def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\([A-Za-z]|\s\):', line)
+            match = re.match(r'\s*def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(.*?\):', line)
             if match:
                 func_name = match.group(1)
                 # Check if it's NOT snake_case (has uppercase letters)
