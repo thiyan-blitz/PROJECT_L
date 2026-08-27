@@ -70,7 +70,7 @@ class ComplexityRule(Rule):
     description = "Functions should ideally be under 30 lines"
 
     def __init__(self, max_lines: int = 30):
-        self.max_lines = max_lines  # Encapsulation: rule owns its own config
+        self.max_lines = max_lines  
 
     def check(self, source_code: str) -> list:
         issues = []
