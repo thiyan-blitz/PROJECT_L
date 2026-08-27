@@ -1,8 +1,3 @@
-"""
-codeguard.py - Main CLI entry point
-Usage: python codeguard.py analyze <file.py> [--format json]
-"""
-
 import sys
 import argparse
 from analyzer import Analyzer
@@ -12,7 +7,7 @@ from reporter import ConsoleReporter, JSONReporter
 def main():
     parser = argparse.ArgumentParser(
         prog="codeguard",
-        description="  A Python code analyzer that checks for common issues."
+        description="A Python code analyzer that checks for common issues."
     )
 
     subparsers = parser.add_subparsers(dest="command")

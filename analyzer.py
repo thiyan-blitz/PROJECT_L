@@ -1,22 +1,8 @@
-"""
-analyzer.py - The Analyzer class
-OOP Concepts demonstrated: Composition (has-a relationship), Single Responsibility
-"""
-
 from rules import Rule, NamingRule, ComplexityRule, SecurityRule
 
 
 class Analyzer:
-    """
-    COMPOSITION example — Analyzer doesn't inherit from Rule,
-    it CONTAINS a list of rules. This is the "has-a" relationship.
-
-    Interview talking point:
-    "The Analyzer doesn't know or care what rules exist.
-    You can add or remove rules without changing the Analyzer at all.
-    That's the power of composition + polymorphism."
-    """
-
+    
     def __init__(self):
         # The Analyzer "has" a list of rules — Composition
         self.rules: list[Rule] = [

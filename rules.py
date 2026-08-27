@@ -1,7 +1,3 @@
-"""
-rules.py - All rule classes for codeguard
-OOP Concepts demonstrated: Abstract base class, Inheritance, Method overriding
-"""
 
 import ast
 import re
@@ -31,12 +27,7 @@ class Rule(ABC):
 # ─────────────────────────────────────────────
 
 class NamingRule(Rule):
-    """
-    SUBCLASS - inherits from Rule
-    Checks if function and variable names follow snake_case convention.
-    Interview talking point: "I overrode the check() method to provide
-    naming-specific logic, while keeping the same interface."
-    """
+    
 
     name = "Naming Convention"
     description = "Function names should be lowercase with underscores (snake_case)"
