@@ -32,23 +32,31 @@ class NamingRule(Rule):
     name = "Naming Convention"
     description = "Function names should be lowercase with underscores (snake_case)"
 
-    def check(self, source_code: str) -> list:
-        issues = []
-        lines = source_code.splitlines()
+    import re
 
-        for line_num, line in enumerate(lines, start=1):
-            # Look for function definitions
-            match = re.match(r'\s*def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(.*?\):', line)
-            if match:
-                func_name = match.group(1)
-                # Check if it's NOT snake_case (has uppercase letters)
-                if func_name != func_name.lower() and not func_name.startswith('__'):
-                    issues.append(Issue(
-                        line=line_num,
-                        message=f"Function '{func_name}' should be snake_case",
-                        severity="warning",
-                        rule=self.name
-                    ))
+def check(self, source_code: str) -> list:
+    issues = []
+    lines = source_code.splitlines()
+
+    snake_case_pattern = re.compile(r'^[a-z_][a-z0-9_]*$')
+    
+    dunder_pattern = re.compile(r'^__[a-z0-9_]+__$')
+
+    for line_num, line in enumerate(lines, start=1):
+        match = re.match(r'\s*def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(.*?\):', line)
+        if match:
+            func_name = match.group(1)
+
+            if dunder_pattern.match(func_name):
+                continue
+
+            if not snake_case_pattern.match(func_name):
+                issues.append(Issue(
+                    line=line_num,
+                    message=f"Function '{func_name}' should be snake_case",
+                    severity="warning",
+                    rule=self.name
+                ))
 
         return issues
 
@@ -58,13 +66,6 @@ class NamingRule(Rule):
 # ─────────────────────────────────────────────
 
 class ComplexityRule(Rule):
-    """
-    SUBCLASS - inherits from Rule
-    Checks if functions are too long (hard to read and maintain).
-    Interview talking point: "This class has its own state (max_lines)
-    that controls its behavior — demonstrating encapsulation."
-    """
-
     name = "Function Length"
     description = "Functions should ideally be under 30 lines"
 
