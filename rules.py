@@ -99,13 +99,7 @@ class ComplexityRule(Rule):
 # ─────────────────────────────────────────────
 
 class SecurityRule(Rule):
-    """
-    SUBCLASS - inherits from Rule
-    Catches common Python anti-patterns that can hide bugs.
-    Interview talking point: "I used a list of patterns so adding
-    new security checks is just adding to the list — Open/Closed principle."
-    """
-
+    
     name = "Security & Best Practices"
     description = "Detects bare except clauses and other anti-patterns"
 
@@ -142,11 +136,7 @@ from dataclasses import dataclass
 @dataclass
 
 class Issue:
-    """
-    Represents a single problem found in the code.
-    Interview talking point: "I separated the data (Issue) from
-    the logic (Rule) — Single Responsibility Principle."
-    """
+   
 
     line: int
     message: str
